@@ -39,7 +39,7 @@ def main():
                     writer_csv.writerow(['Task', 'Completed'])
                     for todo in todos:
                         writer_csv.writerow([todo['title'], todo['completed']])
-                    
+
                 print(f"The data has been successfully exported in '{file_name}'.")
                 print(text)
                 for todo in todos:
