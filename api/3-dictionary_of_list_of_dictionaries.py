@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 """Consumimos API para extraer información ficticia"""
-import csv
+import json
 import requests
 from sys import argv
 
 
 def main():
     """Consultamos el nombre y las tareas de un empleado."""
-    if len(argv) >= 2 and argv[1].isdigit():
-        id = argv[1]
 
+    all_employees = {}
+
+    for id in range(1, 11):
         url_id = f"https://jsonplaceholder.typicode.com/users/{id}"
         url_todos = f"https://jsonplaceholder.typicode.com/users/{id}/todos"
 
@@ -29,24 +30,29 @@ def main():
             exit()
 
         todos = response.json()
+        list_todos = []
+        dict_todos = {}
 
         all_tasks = [todo['title'] for todo in todos]
         status_task = [todo['completed'] for todo in todos]
-        employee_todos = []
 
         for index in range(0, len(all_tasks)):
-            record = [str(id), EMPLOYEE_NAME, str(
-                status_task[index]), all_tasks[index]]
+            dict_todos = {
+                'username': EMPLOYEE_NAME,
+                'task': all_tasks[index],
+                'completed': status_task[index]
+            }
 
-            employee_todos.append(record)
+            list_todos.append(dict_todos)
 
-        name_file_csv = f'{id}.csv'
+            employee_todos = {str(id): list_todos}
 
-        with open(name_file_csv, mode='w', newline='') as f:
-            writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-            writer.writerows(employee_todos)
-    else:
-        print("Se esperaba que ingresará un ID valido")
+        all_employees.update(employee_todos)
+
+        name_file_json = 'todo_all_employees.json'
+
+        with open(name_file_json, mode='w', newline='') as f:
+            json.dump(all_employees, f, indent=4)
 
 
 if __name__ == '__main__':

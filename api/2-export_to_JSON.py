@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Consumimos API para extraer información ficticia"""
-import csv
+import json
 import requests
 from sys import argv
 
@@ -29,22 +29,26 @@ def main():
             exit()
 
         todos = response.json()
+        list_todos = []
+        dict_todos = {}
 
         all_tasks = [todo['title'] for todo in todos]
         status_task = [todo['completed'] for todo in todos]
-        employee_todos = []
 
         for index in range(0, len(all_tasks)):
-            record = [str(id), EMPLOYEE_NAME, str(
-                status_task[index]), all_tasks[index]]
+            dict_todos = {
+                'task': all_tasks[index],
+                'completed': status_task[index],
+                'username': EMPLOYEE_NAME}
 
-            employee_todos.append(record)
+            list_todos.append(dict_todos)
 
-        name_file_csv = f'{id}.csv'
+            employee_todos = {str(id): list_todos}
 
-        with open(name_file_csv, mode='w', newline='') as f:
-            writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-            writer.writerows(employee_todos)
+        name_file_json = f'{id}.json'
+
+        with open(name_file_json, mode='w', newline='') as f:
+            json.dump(employee_todos, f, indent=4)
     else:
         print("Se esperaba que ingresará un ID valido")
 
